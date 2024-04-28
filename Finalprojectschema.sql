@@ -60,6 +60,7 @@ create table sale (
 create table itemsbought (
     transactionid int not null,
     itemid int not null,
+    quantity int not null,
     constraint ibpk primary key(transactionid, itemid),
     constraint ibfk1 foreign key(transactionid) references purchases(transactionid),
     constraint ibfk2 foreign key(itemid) references item(itemid)
