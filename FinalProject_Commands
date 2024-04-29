@@ -1,0 +1,54 @@
+/* ------------------ EXAMPLE QUERIES ------------------ */
+-- Register Employee
+INSERT INTO EMPLOYEE VALUES 
+  ('0001','Alice','Adams',NULL,'100 LANCASTER AVE','01JAN2000',NULL,16.75,'0');
+SELECT * FROM EMPLOYEE
+WHERE employeeid = 0001;
+
+-- Doomsday
+UPDATE EMPLOYEE 
+SET enddate = '29APR2024', hourlysalary = '0.00'
+WHERE firstname <> 'Bob';
+SELECT * FROM EMPLOYEE;
+
+-- PayDay
+SELECT * FROM EMPLOYEE;
+UPDATE EMPLOYEE 
+SET bankaccount = bankaccount + hourlysalary
+WHERE bankaccount is not null
+AND hourlysalary is not null
+AND enddate is null;
+SELECT * FROM EMPLOYEE;
+
+-- Shopping List
+INSERT INTO PURCHASES (transactionid, customerid) VALUES
+    ('0001', (SELECT customerid FROM CUSTOMER WHERE firstname = 'Liam' AND lastname = 'Jones'));
+INSERT INTO ITEMSBOUGHT (transactionid, itemid, quantity)
+    VALUES ('0001', (SELECT itemid FROM ITEM WHERE itemname = 'Apple'), '20');
+INSERT INTO SALEDESCRIPTION VALUES 
+  ('0004','Purchase of 20 Apples');
+INSERT INTO SALE (transactionid, discountid) VALUES
+  ('0001','0004');
+SELECT * FROM ITEMSBOUGHT;
+  
+-- Transaction
+INSERT INTO PROCESSEDBY (transactionid, employeeid) VALUES
+    ('0001', (SELECT employeeid FROM EMPLOYEE WHERE firstname = 'Bob' AND lastname = 'Brown'));
+    
+SELECT * FROM CUSTOMER WHERE customerid = '6';
+SELECT * FROM EMPLOYEE WHERE employeeid = '2';
+
+UPDATE CUSTOMER 
+SET creditcard = creditcard - (
+        (SELECT price FROM ITEM WHERE itemid = (SELECT itemid FROM ITEMSBOUGHT WHERE transactionid = '1')) *
+        (SELECT quantity FROM ITEMSBOUGHT WHERE transactionid = '1') )
+WHERE customerid = '6';
+
+UPDATE EMPLOYEE 
+SET bankaccount = bankaccount + (
+        (SELECT price FROM ITEM WHERE itemid = (SELECT itemid FROM ITEMSBOUGHT WHERE transactionid = '1')) *
+        (SELECT quantity FROM ITEMSBOUGHT WHERE transactionid = '1') )
+WHERE employeeid = '2';
+
+SELECT * FROM CUSTOMER WHERE customerid = '6';
+SELECT * FROM EMPLOYEE WHERE employeeid = '2';
